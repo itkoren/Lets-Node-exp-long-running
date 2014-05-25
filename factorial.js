@@ -1,44 +1,32 @@
-var factorial1 = function(n){
-    var fact = 1;
+function isValid(n) {
+    return !isNaN(n) && 0 < parseInt(n, 10);
+}
 
-    setTimeout(function(){
-        console.log("TIMEOUT 0");
-    }, 0);
+var factorial1 = function(n) {
+    var fact = 0;
 
-    for (var i = 1; i <= n; i++) {
-        console.log("step" + i);
-        fact = fact * i;
+    if (isValid(n)) {
+        fact = 1;
+        setTimeout(function(){
+            console.log("TIMEOUT 0");
+        }, 0);
+
+        for (var i = 1; i <= n; i++) {
+            console.log("step" + i);
+            fact = fact * i;
+        }
+
+        console.log("step" + n);
     }
-
-    console.log("step" + n);
 
     return fact;
 };
 
 var factorial2 = function(n, callback){
-    var fact = 1;
+    var fact = 0;
 
-    setTimeout(function(){
-        console.log("TIMEOUT 0");
-    }, 0);
-
-    for (var i = 1; i <= n; i++) {
-        console.log("step" + i);
-        fact = fact * i;
-    }
-
-    console.log("step" + n);
-
-    callback(null, fact);
-};
-
-var factorial3 = function(n, callback) {
-    setTimeout(function(){
-        console.log("TIMEOUT 0");
-    }, 0);
-
-    setImmediate(function(){
-        var fact = 1;
+    if (isValid(n)) {
+        fact = 1;
 
         setTimeout(function(){
             console.log("TIMEOUT 0");
@@ -48,11 +36,38 @@ var factorial3 = function(n, callback) {
             console.log("step" + i);
             fact = fact * i;
         }
-    
+
         console.log("step" + n);
-    
-        callback(null, fact);
-    });
+    }
+
+    callback(null, fact);
+};
+
+var factorial3 = function(n, callback) {
+
+        setTimeout(function () {
+            console.log("TIMEOUT 0");
+        }, 0);
+
+        setImmediate(function () {
+            var fact = 0;
+            if (isValid(n)) {
+                fact = 1;
+
+                setTimeout(function () {
+                    console.log("TIMEOUT 0");
+                }, 0);
+
+                for (var i = 1; i <= n; i++) {
+                    console.log("step" + i);
+                    fact = fact * i;
+                }
+
+                console.log("step" + n);
+            }
+
+            callback(null, fact);
+        });
 };
 
 var factorial4 = function(n, callback) {
@@ -61,17 +76,23 @@ var factorial4 = function(n, callback) {
             console.log("TIMEOUT 0");
         }, 0);
 
-        console.log("step" + index);
-        fact = fact * index;
+        if (isValid(n)) {
+            console.log("step" + index);
+            fact = fact * index;
 
-        if (index === n) {
-            callback(null, fact);
+            if (index === n) {
+                callback(null, fact);
+                return;
+            }
+
+            setImmediate(function() {
+                facter(fact, ++index, callback);
+            });
+        }
+        else {
+            callback(null, 0);
             return;
         }
-
-        setImmediate(function() {
-            facter(fact, ++index, callback);
-        });
     };
 
     setTimeout(function(){
@@ -83,21 +104,27 @@ var factorial4 = function(n, callback) {
 
 var factorial5 = function(n, callback) {
     var facter = function(fact, index, callback) {
-        console.log("step" + index);
-        fact = fact * index;
+        if (isValid(n)) {
+            console.log("step" + index);
+            fact = fact * index;
 
-        if (index === n) {
+            if (index === n) {
+                callback(null, fact);
+                return;
+            }
+
+            setTimeout(function () {
+                console.log("TIMEOUT 0");
+            }, 0);
+
+            process.nextTick(function () {
+                facter(fact, ++index, callback);
+            });
+        }
+        else {
             callback(null, fact);
             return;
         }
-
-        setTimeout(function(){
-            console.log("TIMEOUT 0");
-        }, 0);
-
-        process.nextTick(function() {
-            facter(fact, ++index, callback);
-        });
     };
 
     setTimeout(function(){
