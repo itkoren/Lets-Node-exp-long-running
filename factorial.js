@@ -7,16 +7,11 @@ var factorial1 = function(n) {
 
     if (isValid(n)) {
         fact = 1;
-        setTimeout(function(){
-            console.log("TIMEOUT 0");
-        }, 0);
 
         for (var i = 1; i <= n; i++) {
             console.log("step" + i);
             fact = fact * i;
         }
-
-        console.log("step" + n);
     }
 
     return fact;
@@ -28,16 +23,10 @@ var factorial2 = function(n, callback){
     if (isValid(n)) {
         fact = 1;
 
-        setTimeout(function(){
-            console.log("TIMEOUT 0");
-        }, 0);
-
         for (var i = 1; i <= n; i++) {
             console.log("step" + i);
             fact = fact * i;
         }
-
-        console.log("step" + n);
     }
 
     callback(null, fact);
@@ -45,37 +34,23 @@ var factorial2 = function(n, callback){
 
 var factorial3 = function(n, callback) {
 
-        setTimeout(function () {
-            console.log("TIMEOUT 0");
-        }, 0);
+    setImmediate(function () {
+        var fact = 0;
+        if (isValid(n)) {
+            fact = 1;
 
-        setImmediate(function () {
-            var fact = 0;
-            if (isValid(n)) {
-                fact = 1;
-
-                setTimeout(function () {
-                    console.log("TIMEOUT 0");
-                }, 0);
-
-                for (var i = 1; i <= n; i++) {
-                    console.log("step" + i);
-                    fact = fact * i;
-                }
-
-                console.log("step" + n);
+            for (var i = 1; i <= n; i++) {
+                console.log("step" + i);
+                fact = fact * i;
             }
+        }
 
-            callback(null, fact);
-        });
+        callback(null, fact);
+    });
 };
 
 var factorial4 = function(n, callback) {
     var facter = function(fact, index, callback) {
-        setTimeout(function(){
-            console.log("TIMEOUT 0");
-        }, 0);
-
         if (isValid(n)) {
             console.log("step" + index);
             fact = fact * index;
@@ -95,10 +70,6 @@ var factorial4 = function(n, callback) {
         }
     };
 
-    setTimeout(function(){
-        console.log("TIMEOUT 0");
-    }, 0);
-
     facter(1, 1, callback);
 };
 
@@ -113,10 +84,6 @@ var factorial5 = function(n, callback) {
                 return;
             }
 
-            setTimeout(function () {
-                console.log("TIMEOUT 0");
-            }, 0);
-
             process.nextTick(function () {
                 facter(fact, ++index, callback);
             });
@@ -126,10 +93,6 @@ var factorial5 = function(n, callback) {
             return;
         }
     };
-
-    setTimeout(function(){
-        console.log("TIMEOUT 0");
-    }, 0);
 
     facter(1, 1, callback);
 };
@@ -161,14 +124,16 @@ var tcpServer = net.createServer(function(conn) {
         var number = !isNaN(values[0]) ? parseInt(values[0], 10) : 0;
         var method = values[1] ? factorials[values[1].replace("\r", "").replace("\n", "")] : factorial4;
 
+        // The setTimeout method is restricted to 250 requests per second on most systems.
+        // This means that setTimeout(0, handler) waits roughly 4ms before executing, even if no additional actions are pending.
+        setTimeout(function () {
+            console.log("TIMEOUT 0 BEFORE");
+        }, 0);
+
         var ret = method(number, function(err, result) {
             console.log("COMPLETED:" + result);
             conn.write("Result = " + result + "\r\n");
         });
-
-        setTimeout(function(){
-            console.log("TIMEOUT 0");
-        }, 0);
 
         if (ret) {
             console.log("COMPLETED:" + ret);
