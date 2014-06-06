@@ -14,11 +14,23 @@ long fact(int n) {
   }
 }
 
+// This is the function called directly from JavaScript land. It creates a
+// work request object and schedules it for execution.
 Handle<Value> Factorial(const Arguments& args) {
 
   HandleScope scope;
 
   // Really should check the number and type of the arguments.
+  if (args.Length() < 1) {
+    ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
+    return scope.Close(Undefined());
+  }
+
+  if (!args[0]->IsNumber()) {
+    ThrowException(Exception::TypeError(String::New("First argument must be an integer")));
+    return scope.Close(Undefined());
+  }
+
   int iNum = args[0]->NumberValue();
 
   // Invoke fact on iNum
@@ -32,8 +44,7 @@ void InitializeMethods(Handle<Object> target) {
   // Do Methods registration
   target->Set(String::NewSymbol("factorial"),
       FunctionTemplate::New(Factorial)->GetFunction());
-
 }
 
-// Expose the module
-NODE_MODULE(factorial, InitializeMethods);
+// Expose the module to NodeJS
+NODE_MODULE(factorial1, InitializeMethods);

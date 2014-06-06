@@ -108,10 +108,6 @@ var factorials = {
 // include the http module
 var net = require("net");
 
-// Load our C++ factorial addon and add it to the list of available factorials
-var factorial = require("./factorial_addon/build/Release/factorial.node");
-factorials["c++"] = factorial.factorial;
-
 // Create a TCP Server Instance and set an event listener & handler for the TCP connection event emitted by the server
 var tcpServer = net.createServer(function(conn) {
 
@@ -134,12 +130,15 @@ var tcpServer = net.createServer(function(conn) {
             console.log("TIMEOUT 0 BEFORE");
         }, 0);
 
+        console.time("factorial")
         var ret = method(number, function(err, result) {
+            console.timeEnd("factorial");
             console.log("COMPLETED:" + result);
             conn.write("Result = " + result + "\r\n");
         });
 
         if (ret) {
+            console.timeEnd("factorial");
             console.log("COMPLETED:" + ret);
             conn.write("Result = " + ret + "\r\n");
         }
