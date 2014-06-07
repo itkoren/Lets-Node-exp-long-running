@@ -21,7 +21,7 @@ Handle<Value> Factorial(const Arguments& args) {
   HandleScope scope;
 
   // Really should check the number and type of the arguments.
-  if (args.Length() < 1) {
+  if (1 > args.Length()) {
     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
     return scope.Close(Undefined());
   }
