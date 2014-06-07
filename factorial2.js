@@ -26,8 +26,9 @@ var tcpServer = net.createServer(function(conn) {
         var number = !isNaN(values[0]) ? parseInt(values[0], 10) : 0;
         var method = values[1] ? factorials[values[1].replace("\r", "").replace("\n", "")] : factorial4;
 
-        // The setTimeout method is restricted to 250 requests per second on most systems.
-        // This means that setTimeout(0, handler) waits roughly 4ms before executing, even if no additional actions are pending.
+        // I would like to see if the next tick of the event loop is being performed
+        // So I'll use here the setImmediate API which promises the callback will be invoked in the next tick of the event loop
+        // Unlike the setTimeout API which has the 4 millisecond limit
         setImmediate(function () {
             console.log("TIMEOUT 0 BEFORE");
         });

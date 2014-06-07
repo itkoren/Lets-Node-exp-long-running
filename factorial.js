@@ -124,8 +124,17 @@ var tcpServer = net.createServer(function(conn) {
         var number = !isNaN(values[0]) ? parseInt(values[0], 10) : 0;
         var method = values[1] ? factorials[values[1].replace("\r", "").replace("\n", "")] : factorial4;
 
-        // The setTimeout method is restricted to 250 requests per second on most systems.
-        // This means that setTimeout(0, handler) waits roughly 4ms before executing, even if no additional actions are pending.
+        // When using the setTimeout API, once the browser has yielded control it relies on an interrupt from the underlying operating system
+        // and hardware to receive control and issue the JavaScript callback.
+        // Having longer durations between these interrupts allows hardware to enter low power states which significantly decreases power consumption.
+        // By default the Microsoft Windows operating system and Intel based processors use 15.6ms resolutions for these interrupts (64 interrupts per second).
+        // This allows Intel based processors to enter their lowest power state.
+        // For this reason web developers have traditionally only been able to achieve 64 callbacks per second when using setTimeout(0) when using HTML4 browsers including earlier editions of Internet Explorer and Mozilla Firefox.
+        // Over the last three years browsers have attempted to increase the number of callbacks per second that JavaScript developers can receive through the setTimeout and setInterval API's
+        // by changing the power conscious Windows system settings and preventing hardware from entering low power states.
+        // The HTML5 specification has gone to the extreme of recommending 250 callbacks per second.
+        // This means, that the setTimeout method is restricted to 250 requests per second on most systems.
+        // So setTimeout(0, handler) waits roughly 4ms before executing, even if no additional actions are pending.
         setTimeout(function () {
             console.log("TIMEOUT 0 BEFORE");
         }, 0);
